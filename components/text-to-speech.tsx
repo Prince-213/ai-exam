@@ -1,10 +1,16 @@
-"use client";
+import React, { useState, useEffect, Dispatch, SetStateAction } from "react";
 
-import React, { useState, useEffect } from "react";
-
-const TextToSpeech = ({ text }: { text: string }) => {
+const TextToSpeech = ({
+  text,
+  now,
+  setNow
+}: {
+  text: string;
+  now: boolean;
+  setNow: Dispatch<SetStateAction<boolean>>;
+}) => {
   const [isPaused, setIsPaused] = useState(false);
-  const [utterance, setUtterance] = useState<any>("");
+  const [utterance, setUtterance] = useState<any>(null);
 
   useEffect(() => {
     const synth = window.speechSynthesis;
@@ -26,7 +32,7 @@ const TextToSpeech = ({ text }: { text: string }) => {
 
     synth.speak(utterance);
 
-    setIsPaused(true);
+    setIsPaused(false);
   };
 
   const handlePause = () => {

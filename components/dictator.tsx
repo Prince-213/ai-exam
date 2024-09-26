@@ -1,30 +1,30 @@
 import React, { useEffect, useState } from "react";
 import SpeechRecognition, {
-  useSpeechRecognition,
+  useSpeechRecognition
 } from "react-speech-recognition";
 
-const Dictaphone1 = () => {
+const Dictaphone1 = ({ children }: { children: React.ReactNode }) => {
   const [message, setMessage] = useState("");
   const commands = [
     {
       command: "reset",
-      callback: () => resetTranscript(),
+      callback: () => resetTranscript()
     },
     {
       command: "shut up",
-      callback: () => setMessage("I wasn't talking."),
+      callback: () => setMessage("I wasn't talking.")
     },
     {
       command: "Hello",
-      callback: () => setMessage("Hi there!"),
-    },
+      callback: () => setMessage("Hi there!")
+    }
   ];
   const {
     transcript,
     interimTranscript,
     finalTranscript,
     resetTranscript,
-    listening,
+    listening
   } = useSpeechRecognition({ commands });
 
   useEffect(() => {
@@ -44,7 +44,7 @@ const Dictaphone1 = () => {
   const listenContinuously = () => {
     SpeechRecognition.startListening({
       continuous: true,
-      language: "en-GB",
+      language: "en-GB"
     });
   };
   return (

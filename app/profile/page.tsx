@@ -1,53 +1,183 @@
-import React from "react";
-import profile from "@/assets/pexels-jimmy-jimmy-1484806.jpg";
-import Image from "next/image";
-import WebcamDemo from "@/components/web-cam";
+"use client";
 
-const ProfilePage = () => {
+import "regenerator-runtime/runtime";
+import Image from "next/image";
+import face from "@/assets/facescan.png";
+import TextToSpeech from "@/components/text-to-speech";
+import SpeechRecognition, {
+  useSpeechRecognition
+} from "react-speech-recognition";
+import { useRouter } from "next/navigation";
+
+import { useEffect, useState } from "react";
+import useStore from "@/lib/store";
+
+export default function VoiceProfile() {
+  const [regNumber, setRegNumber] = useState("");
+  const [passcode, setPasscode] = useState("");
+
+  const route = useRouter();
+
+  const [isPaused, setIsPaused] = useState(false);
+  const [utterance, setUtterance] = useState<any>("");
+
+  const [target, setTarget] = useState("none");
+
+  const [message, setMessage] = useState("");
+  const commands = [
+    {
+      command: "reset",
+      callback: () => resetTranscript()
+    },
+    {
+      command: "are you listening",
+      callback: () => say({ text: "Yes i am listening" })
+    },
+    {
+      command: "shut up",
+      callback: () => say({ text: "I was mot talking" })
+    },
+    {
+      command: "hello",
+      callback: () => {
+        say({ text: "Hi there!" });
+      }
+    },
+
+    {
+      command: "get started",
+      callback: () => {
+        say({ text: "Exam Starting" });
+        route.push("/exam");
+      }
+    },
+
+    {
+      command: "submit",
+      callback: async () => {
+        await setText("Form submitted");
+        say({ text: "Exam Starting" });
+        route.push("/exam");
+      }
+    }
+  ];
+
+  const say = ({ text }: { text: string }) => {
+    const synth = window.speechSynthesis;
+    const greetingText = "It works ";
+    const utterance = new SpeechSynthesisUtterance(text);
+
+    // Speak the greeting when the page is opened
+    synth.speak(utterance);
+  };
+
+  useEffect(() => {
+    listenContinuously();
+  }, []);
+
+  const {
+    transcript,
+    interimTranscript,
+    finalTranscript,
+    resetTranscript,
+    listening
+  } = useSpeechRecognition({ commands });
+
+  const [text, setText] = useState(
+    "hello there i'll be your visual assistant. Provide the necessary information to get started"
+  );
+
+  const handlePlay = async (speech: string) => {
+    const synth = window.speechSynthesis;
+
+    if (isPaused) {
+      synth.resume();
+    }
+
+    synth.speak(utterance);
+
+    setIsPaused(true);
+  };
+
+  const getStarted = async () => {
+    await handlePlay("");
+  };
+
+  useEffect(() => {
+    const synth = window.speechSynthesis;
+    const greetingText =
+      "Welcome to the profile page from the credentials you are Micheal John of Computer Engineering Department say get started to begin your exam";
+    const utterance = new SpeechSynthesisUtterance(greetingText);
+
+    // Speak the greeting when the page is opened
+    synth.speak(utterance);
+
+    return () => {
+      // Clean up the speech synthesis when the component is unmounted
+      synth.cancel();
+    };
+  }, []);
+
+  useEffect(() => {
+    const synth = window.speechSynthesis;
+    const u = new SpeechSynthesisUtterance(text);
+
+    setUtterance(u);
+
+    return () => {
+      synth.cancel();
+    };
+  }, [text]);
+
+  useEffect(() => {
+    if (finalTranscript !== "") {
+      console.log("Got final result:", finalTranscript);
+      console.log("Got interim result:", interimTranscript);
+    }
+  }, [interimTranscript, finalTranscript]);
+  if (!SpeechRecognition.browserSupportsSpeechRecognition()) {
+    return null;
+  }
+
+  if (!SpeechRecognition.browserSupportsSpeechRecognition()) {
+    console.log(
+      "Your browser does not support speech recognition software! Try Chrome desktop, maybe?"
+    );
+  }
+  const listenContinuously = () => {
+    SpeechRecognition.startListening({
+      continuous: true,
+      language: "en-GB"
+    });
+  };
+
   return (
-    <div className=" w-full h-screen py-10 bg-gradient-to-b from-[#363d5a] to-[#020735]">
-      
-      <div className=" w-[90%] space-y-5  h-full flex justify-center flex-col items-center mx-auto">
-        <h2 className=" text-3xl font-semibold text-blue-400">Successfull !</h2>
-        <p>Identity Confirmed.. You may proceed with your exam</p>
-        <div className=" flex flex-col items-center space-y-5 py-10">
-          <div className=" fex rounded-[50%] overflow-hidden w-[10rem] h-[10rem] relative">
-            <Image
-              src={profile}
-              fill
-              alt=""
-              style={{ objectFit: "cover", objectPosition: "center" }}
-            />
+    <div className="  w-full h-screen flex flex-col items-center justify-center">
+      <h2 className=" font-semibold text-2xl">Voice Input Form</h2>
+      <br />
+      <br />
+
+      <div className=" text-black">
+        <div>
+          <span>listening: {listening ? "on" : "off"}</span>
+          <div>
+            <button type="button" onClick={resetTranscript}>
+              Reset
+            </button>
+            <button type="button" onClick={listenContinuously}>
+              Listen
+            </button>
+            <button type="button" onClick={SpeechRecognition.stopListening}>
+              Stop
+            </button>
           </div>
-          <h2 className=" text-xl font-semibold text-blue-400">John Smith</h2>
         </div>
-        <div className=" w-full gap-y-5 grid grid-cols-2">
-          <div className=" space-y-2">
-            <p className=" text-white font-semibold text-lg">Name:</p>
-            <h2 className=" text-xl font-semibold text-blue-400">John Smith</h2>
-          </div>
-          <div className=" space-y-2">
-            <p className=" text-white font-semibold text-lg">
-              Registration Number:
-            </p>
-            <h2 className=" text-xl font-semibold text-blue-400">112233</h2>
-          </div>
-          <div className=" space-y-2">
-            <p className=" text-white font-semibold text-lg">Department:</p>
-            <h2 className=" text-xl font-semibold text-blue-400">
-              Social Science
-            </h2>
-          </div>
-          <div className=" space-y-2">
-            <p className=" text-white font-semibold text-lg">Faculty:</p>
-            <h2 className=" text-xl font-semibold text-blue-400">
-              Applied Science
-            </h2>
-          </div>
+        <div>{message}</div>
+        <div>{target}</div>
+        <div>
+          <span>{transcript}</span>
         </div>
       </div>
     </div>
   );
-};
-
-export default ProfilePage;
+}
