@@ -98,12 +98,26 @@ export default function ScanComponent() {
   };
 
   return (
-    <div className="myapp">
-      <h1>Face Detection</h1>
+    <div className="myapp py-10">
+      <h1 className=" font-semibold text-3xl">Welcome to the Online Exam</h1>
+
       <div className="appvideo">
         <video crossOrigin="anonymous" ref={videoRef} autoPlay></video>
       </div>
       <canvas ref={canvasRef} width="940" height="650" className="appcanvas" />
+
+      <button
+        onClick={() => router.push("/braile")}
+        className=" text-white font-semibold w-fit px-4 py-4 rounded-lg bg-blue-500"
+      >
+        Use Braille System
+      </button>
+      <button
+        onClick={() => router.push("/admin")}
+        className=" text-white font-semibold w-fit px-4 py-4 rounded-lg bg-blue-500"
+      >
+        Admin Panel
+      </button>
     </div>
   );
 }

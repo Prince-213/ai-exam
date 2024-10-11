@@ -4,6 +4,7 @@ import "regenerator-runtime/runtime";
 import Image from "next/image";
 import TextToSpeech from "@/components/ttts";
 import face from "@/assets/facescan.png";
+import { v4 as uuidv4 } from "uuid";
 
 import SpeechRecognition, {
   useSpeechRecognition
@@ -13,8 +14,13 @@ import { useRouter } from "next/navigation";
 import { Suspense, useEffect, useState } from "react";
 import useStore from "@/lib/store";
 import TTS from "@/components/ttts";
+import axios from "axios";
 
-export default function VoiceInputForm() {
+export default function VoiceInputForm({
+  params
+}: {
+  params: { slug: string };
+}) {
   const [questionOne, setQuestionOne] = useState("");
   const [questionTwo, setQuestionTwo] = useState("");
   const [score, setScore] = useState(0);
@@ -120,6 +126,13 @@ export default function VoiceInputForm() {
         say({
           text: `You exam is concluded. You scored ${theScore} out of 2 in the Exam`
         });
+        await axios.post("http://localhost:3000/scores", {
+          id: uuidv4(),
+          reg: params.slug,
+          score: score
+        });
+
+        route.push("/");
       }
     }
   ];

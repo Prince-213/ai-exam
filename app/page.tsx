@@ -109,7 +109,7 @@ export default function Home() {
   };
 
   return (
-    <div className=" ">
+    <div className=" w-full h-screen flex items-center justify-center ">
       <ScanComponent />
     </div>
   );

@@ -118,7 +118,7 @@ export default function VoiceInputForm() {
       callback: async () => {
         await setText("Form submitted");
         await handlePlay("");
-        route.push("/profile");
+        route.push(`/profile/${regNumber}`);
       }
     }
   ];
@@ -136,13 +136,13 @@ export default function VoiceInputForm() {
     listenContinuously();
   }, []);
 
-  const handleRegNumberChange = (value) => {
+  const handleRegNumberChange = (value: string) => {
     // Use a regular expression to remove all non-numeric characters
     const numericValue = value.replace(/[^0-9]/g, "");
     setRegNumber(numericValue);
   };
 
-  const handlePassChange = (value) => {
+  const handlePassChange = (value: string) => {
     // Use a regular expression to remove all non-numeric characters
     const numericValue = value.replace(/[^0-9]/g, "");
     setPasscode(numericValue);

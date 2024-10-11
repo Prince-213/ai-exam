@@ -12,7 +12,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import useStore from "@/lib/store";
 
-export default function VoiceProfile() {
+export default function VoiceProfile({ params }: { params: { slug: string } }) {
   const [regNumber, setRegNumber] = useState("");
   const [passcode, setPasscode] = useState("");
 
@@ -57,7 +57,7 @@ export default function VoiceProfile() {
       callback: async () => {
         await setText("Form submitted");
         say({ text: "Exam Starting" });
-        route.push("/exam");
+        route.push(`/exam/${params.slug}`);
       }
     }
   ];
